@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter_filmes/service/movie_service.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class HomePage extends StatefulWidget {
@@ -12,13 +13,13 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   String _search = "";
-  int _offset = 0;
+  int _page = 1;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Color.fromARGB(255, 13, 37, 63),
+          backgroundColor: const Color.fromARGB(255, 13, 37, 63),
           title: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -32,11 +33,11 @@ class _HomePageState extends State<HomePage> {
           centerTitle: true,
         ),
         body: Padding(
-          padding: EdgeInsets.all(10.0),
+          padding: const EdgeInsets.all(10.0),
           child: Column(children: <Widget>[
             TextField(
               autofocus: true,
-              cursorColor: Color.fromARGB(255, 13, 37, 63),
+              cursorColor: const Color.fromARGB(255, 13, 37, 63),
               decoration: const InputDecoration(
                 labelText: "Escreva o filme que quer consultar",
                 labelStyle: TextStyle(color: Color.fromARGB(255, 13, 37, 63)),
@@ -52,17 +53,18 @@ class _HomePageState extends State<HomePage> {
                       width: 2.0), // Cor da borda quando em foco
                 ),
               ),
-              style: TextStyle(
+              style: const TextStyle(
                   color: Color.fromARGB(255, 13, 37, 63), fontSize: 18),
               onSubmitted: (value) {
                 setState(() {
                   _search = value;
+                  _page = 1;
                 });
               },
             ),
             Expanded(
-              child: FutureBuilder(
-              // future: getAPI2(_search, _offset),
+                child: FutureBuilder(
+              future: searchMovies(_search, _page),
               builder: (context, snapshot) {
                 switch (snapshot.connectionState) {
                   case ConnectionState.waiting:
@@ -71,16 +73,17 @@ class _HomePageState extends State<HomePage> {
                       width: 200.0,
                       height: 200.0,
                       alignment: Alignment.center,
-                      child: CircularProgressIndicator(
+                      child: const CircularProgressIndicator(
                         valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                         strokeWidth: 5.0,
                       ),
                     );
                   default:
-                    if (snapshot.hasError)
+                    if (snapshot.hasError) {
                       return Container();
-                    else
+                    } else {
                       return _createMovieTable(context, snapshot);
+                    }
                 }
               },
             ))
@@ -90,38 +93,62 @@ class _HomePageState extends State<HomePage> {
 
   Widget _createMovieTable(BuildContext context, AsyncSnapshot snapshot) {
     return GridView.builder(
-        padding: EdgeInsets.all(10.0),
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        padding: const EdgeInsets.all(10.0),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2, crossAxisSpacing: 10.0, mainAxisSpacing: 10.0),
-        itemCount: _getCount(snapshot.data["data"]),
+        itemCount: _getCount(snapshot.data["results"]),
         itemBuilder: (context, index) {
-          if (_search == null || index < snapshot.data["data"].length) {
-            return GestureDetector(
-                child: Image.network(
-                  snapshot.data["data"][index]["images"]["fixed_height"]["url"],
-                  height: 300.0,
-                  fit: BoxFit.cover,
-                ),
-                onTap: () {});
+          if (index < snapshot.data["results"].length) {
+            if (snapshot.data["results"][index]["poster_path"] != null) {
+              return GestureDetector(
+                  child: Image.network(
+                    "https://image.tmdb.org/t/p/original" +
+                        snapshot.data["results"][index]["poster_path"],
+                    height: 300.0,
+                    fit: BoxFit.fitHeight,
+                  ),
+                  onTap: () {});
+            } else {
+              return GestureDetector(
+                child: const Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Icon(
+                        Icons.no_photography_outlined,
+                        color: Colors.black,
+                        size: 70.0,
+                      ),
+                      Text(
+                        "Sem foto",
+                        style: TextStyle(color: Colors.black, fontSize: 22.0),
+                      )
+                    ]),
+                onTap: () {
+                  setState(() {});
+                },
+              );
+            }
           } else {
             return Container(
               child: GestureDetector(
-                child: Column(
+                child: const Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Icon(
                         Icons.add,
-                        color: Colors.white,
+                        color: Colors.black,
                         size: 70.0,
                       ),
                       Text(
                         "Carregar mais...",
-                        style: TextStyle(color: Colors.white, fontSize: 22.0),
+                        style: TextStyle(color: Colors.black, fontSize: 22.0),
                       )
                     ]),
                 onTap: () {
                   setState(() {
-                    _offset += 25;
+                    if (_page < snapshot.data["total_pages"]) {
+                      _page += 1;
+                    }
                   });
                 },
               ),
@@ -131,9 +158,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   int _getCount(List data) {
-    if (_search == null) {
-      return data.length;
-    }
     return data.length + 1;
   }
 }
