@@ -1,20 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_filmes/service/movie_service.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class TrendingMoviesPage extends StatefulWidget {
+  const TrendingMoviesPage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<TrendingMoviesPage> createState() => _TrendingMoviesPageState();
 }
 
-class _HomePageState extends State<HomePage> {
-  String _search = "";
+class _TrendingMoviesPageState extends State<TrendingMoviesPage> {
   int _page = 1;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,36 +31,17 @@ class _HomePageState extends State<HomePage> {
         body: Padding(
           padding: const EdgeInsets.all(10.0),
           child: Column(children: <Widget>[
-            TextField(
-              autofocus: true,
-              cursorColor: const Color.fromARGB(255, 13, 37, 63),
-              decoration: const InputDecoration(
-                labelText: "Escreva o filme que quer consultar",
-                labelStyle: TextStyle(color: Color.fromARGB(255, 13, 37, 63)),
-                border: OutlineInputBorder(), // Borda padrão
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                      color: Color.fromARGB(255, 13, 37, 63),
-                      width: 2.0), // Cor da borda quando habilitado
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                      color: Color.fromARGB(255, 13, 37, 63),
-                      width: 2.0), // Cor da borda quando em foco
-                ),
+            const Text(
+              "Filmes populares",
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 30.0,
               ),
-              style: const TextStyle(
-                  color: Color.fromARGB(255, 13, 37, 63), fontSize: 18),
-              onSubmitted: (value) {
-                setState(() {
-                  _search = value;
-                  _page = 1;
-                });
-              },
+              textAlign: TextAlign.center,
             ),
             Expanded(
                 child: FutureBuilder(
-              future: searchMovies(_search, _page),
+              future: trendingMovies(),
               builder: (context, snapshot) {
                 switch (snapshot.connectionState) {
                   case ConnectionState.waiting:
@@ -82,7 +59,7 @@ class _HomePageState extends State<HomePage> {
                     if (snapshot.hasError) {
                       return Container();
                     } else {
-                      return _createMovieTable(context, snapshot);
+                      return _createTrendingTable(context, snapshot);
                     }
                 }
               },
@@ -91,7 +68,7 @@ class _HomePageState extends State<HomePage> {
         ));
   }
 
-  Widget _createMovieTable(BuildContext context, AsyncSnapshot snapshot) {
+  Widget _createTrendingTable(BuildContext context, AsyncSnapshot snapshot) {
     return GridView.builder(
         padding: const EdgeInsets.all(10.0),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
