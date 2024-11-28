@@ -19,10 +19,10 @@ Future<Map<dynamic, dynamic>> trendingMovies() async {
   return json.decode(response.body);
 }
 
-Future<Map<dynamic, dynamic>> getMovieDetails(String _movieID) async {
+Future<Map<dynamic, dynamic>> getMovieDetails(int _movieID) async {
   http.Response response;
 
   response = await http.get(Uri.parse(
-      "https://api.themoviedb.org/3/movie/$_movieID?api_key=$_key&language=pt-BR&append_to_response=credits,similar"));
+      "https://api.themoviedb.org/3/movie/$_movieID?api_key=$_key&language=pt-BR"));
   return json.decode(response.body);
 }

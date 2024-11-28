@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_filmes/service/movie_service.dart';
+import 'package:flutter_filmes/view/details_page.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class TrendingMoviesPage extends StatefulWidget {
@@ -84,7 +85,15 @@ class _TrendingMoviesPageState extends State<TrendingMoviesPage> {
                     height: 300.0,
                     fit: BoxFit.fitHeight,
                   ),
-                  onTap: () {});
+                  onTap: () {
+                    setState(() {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => DetailsPage(
+                                  id: snapshot.data["results"][index]["id"])));
+                    });
+                  });
             } else {
               return GestureDetector(
                 child: Column(
@@ -102,7 +111,13 @@ class _TrendingMoviesPageState extends State<TrendingMoviesPage> {
                       )
                     ]),
                 onTap: () {
-                  setState(() {});
+                  setState(() {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => DetailsPage(
+                                id: snapshot.data["results"][index]["id"])));
+                  });
                 },
               );
             }

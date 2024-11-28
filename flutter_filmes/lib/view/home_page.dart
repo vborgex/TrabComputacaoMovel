@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_filmes/service/movie_service.dart';
+import 'package:flutter_filmes/view/details_page.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class HomePage extends StatefulWidget {
@@ -39,7 +40,7 @@ class _HomePageState extends State<HomePage> {
               autofocus: true,
               cursorColor: const Color.fromARGB(255, 13, 37, 63),
               decoration: const InputDecoration(
-                labelText: "Escreva o filme que quer consultar",
+                labelText: "Digite o nome do filme",
                 labelStyle: TextStyle(color: Color.fromARGB(255, 13, 37, 63)),
                 border: OutlineInputBorder(), // Borda padrão
                 enabledBorder: OutlineInputBorder(
@@ -107,7 +108,15 @@ class _HomePageState extends State<HomePage> {
                     height: 300.0,
                     fit: BoxFit.fitHeight,
                   ),
-                  onTap: () {});
+                  onTap: () {
+                    setState(() {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => DetailsPage(
+                                  id: snapshot.data["results"][index]["id"])));
+                    });
+                  });
             } else {
               return GestureDetector(
                 child: Column(
@@ -125,7 +134,13 @@ class _HomePageState extends State<HomePage> {
                       )
                     ]),
                 onTap: () {
-                  setState(() {});
+                  setState(() {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => DetailsPage(
+                                id: snapshot.data["results"][index]["id"])));
+                  });
                 },
               );
             }
