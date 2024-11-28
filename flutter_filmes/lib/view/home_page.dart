@@ -93,18 +93,19 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _createMovieTable(BuildContext context, AsyncSnapshot snapshot) {
+    final movieData = snapshot.data;
     return GridView.builder(
         padding: const EdgeInsets.all(10.0),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2, crossAxisSpacing: 10.0, mainAxisSpacing: 10.0),
-        itemCount: _getCount(snapshot.data["results"]),
+        itemCount: _getCount(movieData["results"]),
         itemBuilder: (context, index) {
-          if (index < snapshot.data["results"].length) {
-            if (snapshot.data["results"][index]["poster_path"] != null) {
+          if (index < movieData["results"].length) {
+            if (movieData["results"][index]["poster_path"] != null) {
               return GestureDetector(
                   child: Image.network(
                     "https://image.tmdb.org/t/p/original" +
-                        snapshot.data["results"][index]["poster_path"],
+                        movieData["results"][index]["poster_path"],
                     height: 300.0,
                     fit: BoxFit.fitHeight,
                   ),
@@ -114,7 +115,7 @@ class _HomePageState extends State<HomePage> {
                           context,
                           MaterialPageRoute(
                               builder: (context) => DetailsPage(
-                                  id: snapshot.data["results"][index]["id"])));
+                                  id: movieData["results"][index]["id"])));
                     });
                   });
             } else {
@@ -128,7 +129,7 @@ class _HomePageState extends State<HomePage> {
                         size: 70.0,
                       ),
                       Text(
-                        snapshot.data["results"][index]["title"],
+                        movieData["results"][index]["title"],
                         style: TextStyle(color: Colors.black, fontSize: 15.0),
                         textAlign: TextAlign.center,
                       )
@@ -139,12 +140,12 @@ class _HomePageState extends State<HomePage> {
                         context,
                         MaterialPageRoute(
                             builder: (context) => DetailsPage(
-                                id: snapshot.data["results"][index]["id"])));
+                                id: movieData["results"][index]["id"])));
                   });
                 },
               );
             }
-          } else if (_page != snapshot.data["total_pages"]) {
+          } else if (_page != movieData["total_pages"]) {
             return GestureDetector(
               child: const Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -161,7 +162,7 @@ class _HomePageState extends State<HomePage> {
                   ]),
               onTap: () {
                 setState(() {
-                  if (_page < snapshot.data["total_pages"]) {
+                  if (_page < movieData["total_pages"]) {
                     _page += 1;
                   }
                 });

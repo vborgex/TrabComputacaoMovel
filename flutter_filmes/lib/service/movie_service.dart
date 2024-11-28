@@ -11,11 +11,11 @@ Future<Map<dynamic, dynamic>> searchMovies(String _search, int _page) async {
   return json.decode(response.body);
 }
 
-Future<Map<dynamic, dynamic>> trendingMovies() async {
+Future<Map<dynamic, dynamic>> trendingMovies(int _page) async {
   http.Response response;
 
   response = await http.get(Uri.parse(
-      "https://api.themoviedb.org/3/trending/movie/day?api_key=$_key&language=pt-BR"));
+      "https://api.themoviedb.org/3/trending/movie/day?api_key=$_key&language=pt-BR&page=$_page"));
   return json.decode(response.body);
 }
 
