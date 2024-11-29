@@ -29,17 +29,21 @@ class _TrendingMoviesPageState extends State<TrendingMoviesPage> {
           ),
           centerTitle: true,
         ),
+        backgroundColor: Color.fromARGB(255, 240, 240, 240),
         body: Padding(
           padding: const EdgeInsets.all(10.0),
           child: Column(children: <Widget>[
             const Text(
               "Filmes populares",
               style: TextStyle(
-                color: Colors.black,
+                fontFamily: 'Ubuntu',
+                color: Color.fromARGB(255, 13, 37, 63),
                 fontSize: 30.0,
+                fontWeight: FontWeight.bold
               ),
               textAlign: TextAlign.center,
             ),
+            SizedBox(height: 10.0),
             Expanded(
                 child: FutureBuilder(
               future: trendingMovies(_page),
@@ -47,12 +51,9 @@ class _TrendingMoviesPageState extends State<TrendingMoviesPage> {
                 switch (snapshot.connectionState) {
                   case ConnectionState.waiting:
                   case ConnectionState.none:
-                    return Container(
-                      width: 200.0,
-                      height: 200.0,
-                      alignment: Alignment.center,
-                      child: const CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    return Center( // Use Center para centralizar o indicador
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(Color.fromARGB(255, 13, 37, 63)),
                         strokeWidth: 5.0,
                       ),
                     );
@@ -74,27 +75,31 @@ class _TrendingMoviesPageState extends State<TrendingMoviesPage> {
     return GridView.builder(
         padding: const EdgeInsets.all(10.0),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2, crossAxisSpacing: 10.0, mainAxisSpacing: 10.0),
+            crossAxisCount: 2, crossAxisSpacing: 10.0, mainAxisSpacing: 10.0,  childAspectRatio: 0.7),
         itemCount: _getCount(movieData["results"]),
         itemBuilder: (context, index) {
           if (index < movieData["results"].length) {
             if (movieData["results"][index]["poster_path"] != null) {
               return GestureDetector(
-                  child: Image.network(
-                    "https://image.tmdb.org/t/p/original" +
-                        movieData["results"][index]["poster_path"],
-                    height: 300.0,
-                    fit: BoxFit.fitHeight,
-                  ),
-                  onTap: () {
-                    setState(() {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => DetailsPage(
-                                  id: movieData["results"][index]["id"])));
-                    });
-                  });
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(10.0), // Bordas suavemente arredondadas
+                child: Image.network(
+                  "https://image.tmdb.org/t/p/original" +
+                      movieData["results"][index]["poster_path"],
+                      fit: BoxFit.cover,
+                ),
+              ),
+              onTap: () {
+                setState(() {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => DetailsPage(
+                              id: movieData["results"][index]["id"])));
+                });
+              },
+            );
+
             } else {
               return GestureDetector(
                 child: Column(
@@ -124,7 +129,7 @@ class _TrendingMoviesPageState extends State<TrendingMoviesPage> {
             }
           } else if (_page != movieData["total_pages"]) {
             return GestureDetector(
-              child: const Column(
+              child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Icon(
@@ -146,7 +151,9 @@ class _TrendingMoviesPageState extends State<TrendingMoviesPage> {
               },
             );
           }
-        });
+          return SizedBox.shrink();
+        }
+    );
   }
 
   int _getCount(List data) {

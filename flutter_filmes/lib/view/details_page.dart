@@ -34,6 +34,7 @@ class _DetailsPageState extends State<DetailsPage> {
         centerTitle: true,
         elevation: 0,
       ),
+      backgroundColor: Color.fromARGB(255, 240, 240, 240),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
@@ -51,7 +52,7 @@ class _DetailsPageState extends State<DetailsPage> {
                         alignment: Alignment.center,
                         child: const CircularProgressIndicator(
                           valueColor:
-                              AlwaysStoppedAnimation<Color>(Colors.white),
+                              AlwaysStoppedAnimation<Color>(Color.fromARGB(255, 13, 37, 63)),
                           strokeWidth: 5.0,
                         ),
                       );
@@ -81,18 +82,18 @@ Widget _showMovieDetails(BuildContext context, AsyncSnapshot snapshot) {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Center(
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(12.0),
+        Center(
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20.0), // Bordas arredondadas
+            child: AspectRatio(
+              aspectRatio: 0.7, // Defina a proporção desejada (largura / altura)
               child: movieData["poster_path"] != null
                   ? Image.network(
                       "https://image.tmdb.org/t/p/original${movieData["poster_path"]}",
-                      height: 240.0,
-                      width: 360.0,
+                      height: 300,
+                      fit: BoxFit.cover, // Ajusta a imagem para cobrir o espaço
                     )
                   : Container(
-                      height: 240.0,
-                      width: 360.0,
                       color: Colors.grey[300],
                       child: Center(
                         child: Text(
@@ -104,11 +105,13 @@ Widget _showMovieDetails(BuildContext context, AsyncSnapshot snapshot) {
                     ),
             ),
           ),
+        ),
           const SizedBox(height: 20.0),
           Text(
             movieData["title"] ?? "Título não disponível",
-            style: TextStyle(
-              color: Colors.black,
+            style: TextStyle
+            (fontFamily: 'Ubuntu', 
+            color: Color.fromARGB(255, 13, 37, 63),
               fontSize: 24.0,
               fontWeight: FontWeight.bold,
             ),
@@ -117,6 +120,7 @@ Widget _showMovieDetails(BuildContext context, AsyncSnapshot snapshot) {
           Text(
             "Título original: ${movieData["original_title"] ?? "Informação não disponível"}",
             style: TextStyle(
+              fontFamily: 'Ubuntu',
               color: Colors.grey[700],
               fontSize: 16.0,
             ),
@@ -125,6 +129,7 @@ Widget _showMovieDetails(BuildContext context, AsyncSnapshot snapshot) {
           Text(
             "Data de lançamento: ${movieData["release_date"] ?? "Informação não disponível"}",
             style: TextStyle(
+              fontFamily: 'Ubuntu',
               color: Colors.grey[700],
               fontSize: 16.0,
             ),
@@ -133,7 +138,8 @@ Widget _showMovieDetails(BuildContext context, AsyncSnapshot snapshot) {
           Text(
             "Sinopse:",
             style: TextStyle(
-              color: Colors.black,
+              fontFamily: 'Ubuntu',
+              color: Color.fromARGB(255, 13, 37, 63),
               fontSize: 20.0,
               fontWeight: FontWeight.bold,
             ),
@@ -142,7 +148,8 @@ Widget _showMovieDetails(BuildContext context, AsyncSnapshot snapshot) {
           Text(
             movieData["overview"] ?? "Sinopse não disponível",
             style: TextStyle(
-              color: Colors.black,
+              fontFamily: 'Ubuntu',
+              color: Color.fromARGB(255, 13, 37, 63),
               fontSize: 16.0,
             ),
             textAlign: TextAlign.justify,
